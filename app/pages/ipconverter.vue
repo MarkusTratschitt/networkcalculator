@@ -15,7 +15,8 @@ CalculatorWrapper(title="IP Format Converter")
           v-model="format"
           :items="formats"
           label="Eingabeformat"
-          outlined dense
+          outlined
+          dense
         )
 
     v-row(justify="center")
@@ -32,57 +33,53 @@ CalculatorWrapper(title="IP Format Converter")
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent } from 'vue'
 import { useIPConverter } from '@/composables/useIPConverter'
-import type { IPAddressWithFormat, IPFormat } from '@/types/network'
+import type { IPFormat, IPAddressWithFormat } from '@/types/network'
 
 export default defineComponent({
   name: 'IPConverterPage',
-  setup() {
-    const ip = ref('')
-    const format = ref<IPFormat>('decimal')
-    const result = ref<IPAddressWithFormat | null>(null)
-    const ipError = ref(false)
 
-    function isValidIPv4(ip: string): boolean {
+  data() {
+    return {
+      ip: '' as string,
+      format: 'decimal' as IPFormat,
+      result: null as IPAddressWithFormat | null,
+      ipError: false,
+      formats: ['decimal', 'binary', 'hexadecimal'] as IPFormat[]
+    }
+  },
+
+  computed: {
+    resultsToShow(): Record<string, string> {
+      if (!this.result) return {}
+      return {
+        'Binär': this.result.binary,
+        'Dezimal': this.result.decimal,
+        'Hexadezimal': this.result.hexadecimal
+      }
+    }
+  },
+
+  methods: {
+    isValidIPv4(ip: string): boolean {
       const parts = ip.trim().split('.')
       if (parts.length !== 4) return false
       return parts.every(part => {
         const num = Number(part)
         return !isNaN(num) && num >= 0 && num <= 255
       })
-    }
+    },
 
-    function convert() {
-      if (!isValidIPv4(ip.value)) {
-        ipError.value = true
-        result.value = null
+    convert(): void {
+      if (!this.isValidIPv4(this.ip)) {
+        this.ipError = true
+        this.result = null
         return
       }
 
-      ipError.value = false
-      result.value = useIPConverter(ip.value, format.value)
-    }
-
-    const formats: IPFormat[] = ['decimal', 'binary', 'hexadecimal']
-
-    const resultsToShow = computed(() => {
-      if (!result.value) return {}
-      return {
-        'Binär': result.value.binary,
-        'Dezimal': result.value.decimal,
-        'Hexadezimal': result.value.hexadecimal
-      }
-    })
-
-    return {
-      ip,
-      format,
-      result,
-      convert,
-      formats,
-      resultsToShow,
-      ipError
+      this.ipError = false
+      this.result = useIPConverter(this.ip, this.format)
     }
   }
 })

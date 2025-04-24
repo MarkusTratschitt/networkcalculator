@@ -1,12 +1,12 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "./app",
     "paths": {
-      "@/*": ["./app/*"]
-    }
+      "@/*": ["*"] 
+    },
+    "types": ["@types/node"] 
   },
-  "include": ["/app/**/*", "nuxt.config.ts"]
+  "include": ["app/**/*", "nuxt.config.ts", "types/**/*"]
 }
