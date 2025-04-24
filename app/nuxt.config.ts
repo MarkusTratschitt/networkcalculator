@@ -1,15 +1,12 @@
+import { defineNuxtConfig } from "nuxt/config";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
+  //@ts-ignore
   devtools: { enabled: true },
-  ssr: false, 
 
-  typescript: {
-    strict: true,
-    typeCheck: true,
-  },
+  css: ['@/assets/styles/main.less'],
 
-  css: ['@/assets/styles/main.less'], 
   build: {
     transpile: ['vuetify'], 
     
@@ -20,9 +17,9 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxt/test-utils',
-    '@nuxt/pwa' 
+    '@vite-pwa/nuxt' 
   ],
-  
+
   //@ts-ignore
   pwa: {
     registerType: 'autoUpdate',
@@ -47,5 +44,7 @@ export default defineNuxtConfig({
       crawlLinks: true,
       routes: ['/'], 
     },
-  }
+  },
+
+  compatibilityDate: '2025-04-25'
 })

@@ -1,15 +1,34 @@
 <template lang="pug">
-  CalculatorWrapper(title="IP Format Converter")
-    v-form(@submit.prevent="convert")
-      v-row(dense)
-        v-col(cols="12" md="8")
-          InputField(v-model="ip" label="IPv4-Adresse" placeholder="z. B. 192.168.1.1")
-        v-col(cols="12" md="4")
-          v-select(v-model="format" :items="formats" label="Eingabeformat" outlined dense)
+CalculatorWrapper(title="IP Format Converter")
+  v-form(@submit.prevent="convert")
+    v-row(dense align="center" justify="center")
+      v-col(cols="12" md="8")
+        InputField(
+          v-model="ip"
+          label="IPv4-Adresse"
+          placeholder="z. B. 192.168.1.1"
+          :error="ipError"
+          error-messages="Ungültige IP-Adresse"
+        )
+      v-col(cols="12" md="4")
+        v-select(
+          v-model="format"
+          :items="formats"
+          label="Eingabeformat"
+          outlined dense
+        )
 
-      v-btn(color="primary" class="mt-2" type="submit") Konvertieren
+    v-row(justify="center")
+      v-btn(
+        color="primary"
+        class="mt-4"
+        type="submit"
+        :disabled="!ip"
+      ) Konvertieren
 
-    ResultBox(:results="resultsToShow")
+  v-divider.my-6
+
+  ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
 
 <script lang="ts">
@@ -20,17 +39,34 @@ import type { IPAddressWithFormat, IPFormat } from '@/types/network'
 export default defineComponent({
   name: 'IPConverterPage',
   setup() {
-    let ip = ref('')
-    let format = ref<IPFormat>('decimal')
-    let result = ref<IPAddressWithFormat | null>(null)
+    const ip = ref('')
+    const format = ref<IPFormat>('decimal')
+    const result = ref<IPAddressWithFormat | null>(null)
+    const ipError = ref(false)
+
+    function isValidIPv4(ip: string): boolean {
+      const parts = ip.trim().split('.')
+      if (parts.length !== 4) return false
+      return parts.every(part => {
+        const num = Number(part)
+        return !isNaN(num) && num >= 0 && num <= 255
+      })
+    }
 
     function convert() {
+      if (!isValidIPv4(ip.value)) {
+        ipError.value = true
+        result.value = null
+        return
+      }
+
+      ipError.value = false
       result.value = useIPConverter(ip.value, format.value)
     }
 
-    let formats: IPFormat[] = ['decimal', 'binary', 'hexadecimal']
+    const formats: IPFormat[] = ['decimal', 'binary', 'hexadecimal']
 
-    let resultsToShow = computed(() => {
+    const resultsToShow = computed(() => {
       if (!result.value) return {}
       return {
         'Binär': result.value.binary,
@@ -39,7 +75,15 @@ export default defineComponent({
       }
     })
 
-    return { ip, format, result, convert, formats, resultsToShow }
+    return {
+      ip,
+      format,
+      result,
+      convert,
+      formats,
+      resultsToShow,
+      ipError
+    }
   }
 })
 </script>
