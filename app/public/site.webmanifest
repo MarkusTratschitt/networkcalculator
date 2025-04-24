@@ -1,0 +1,22 @@
+{
+  "name": "Network Calculator",
+  "short_name": "NetCalc",
+  "description": "A minimalistic tool for subnetting, bandwidth & latency calculation.",
+  "lang": "en",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#42a5f5",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/favicon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
