@@ -5,16 +5,16 @@ CalculatorWrapper(title="IP Format Converter")
       v-col(cols="12" md="8")
         InputField(
           v-model="ip"
-          label="IPv4-Adresse"
-          placeholder="z. B. 192.168.1.1"
+          label="IPv4 Address"
+          placeholder="e.g. 192.168.1.1"
           :error="ipError"
-          error-messages="Ungültige IP-Adresse"
+          error-messages="Invalid IP address"
         )
       v-col(cols="12" md="4")
         v-select(
           v-model="format"
           :items="formats"
-          label="Eingabeformat"
+          label="Input format"
           outlined
           dense
         )
@@ -25,12 +25,13 @@ CalculatorWrapper(title="IP Format Converter")
         class="mt-4"
         type="submit"
         :disabled="!ip"
-      ) Konvertieren
+      ) Convert
 
   v-divider.my-6
 
   ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
+
 
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -42,26 +43,37 @@ export default defineComponent({
 
   data() {
     return {
+      // User input: the IPv4 address as a string
       ip: '' as string,
+
+      // Selected input format (used for future compatibility)
       format: 'decimal' as IPFormat,
+
+      // Result object containing all converted formats
       result: null as IPAddressWithFormat | null,
+
+      // Indicates whether the input is currently invalid
       ipError: false,
+
+      // Available input formats (for dropdown)
       formats: ['decimal', 'binary', 'hexadecimal'] as IPFormat[]
     }
   },
 
   computed: {
+    // Extract and format results for display in ResultBox
     resultsToShow(): Record<string, string> {
       if (!this.result) return {}
       return {
-        'Binär': this.result.binary,
-        'Dezimal': this.result.decimal,
-        'Hexadezimal': this.result.hexadecimal
+        'Binary': this.result.binary,
+        'Decimal': this.result.decimal,
+        'Hexadecimal': this.result.hexadecimal
       }
     }
   },
 
   methods: {
+    // Basic IPv4 validation: checks structure and number ranges
     isValidIPv4(ip: string): boolean {
       const parts = ip.trim().split('.')
       if (parts.length !== 4) return false
@@ -71,6 +83,8 @@ export default defineComponent({
       })
     },
 
+    // Triggered when form is submitted
+    // Validates input, converts if valid, and handles errors
     convert(): void {
       if (!this.isValidIPv4(this.ip)) {
         this.ipError = true
