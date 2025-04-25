@@ -12,16 +12,22 @@ v-container(fluid class="pa-6")
         class="hover-card"
         height="100%"
       )
+        // Tool title
         v-card-title.text-h6.font-weight-bold.text-center {{ tool.title }}
+
+        // Tool description
         v-card-text.text-body-2.text-grey-darken-1.mt-2.text-center {{ tool.description }}
+
         v-spacer
+
+        // Navigation button
         v-card-actions.justify-center
           v-btn(
             :color="buttonColors[index % buttonColors.length]"
             variant="flat"
             class="text-white px-6"
             @click="$router.push(tool.route)"
-          ) Öffnen
+          ) Open
 </template>
 
 <script lang="ts">
@@ -32,33 +38,36 @@ export default defineComponent({
 
   data() {
     return {
+      // Available tools with title, description and route
       tools: [
         {
           title: 'IP Format Converter',
-          description: 'Konvertiert IPv4 in Binär, Dezimal und Hexadezimal.',
+          description: 'Converts IPv4 addresses into binary, decimal and hexadecimal format.',
           route: '/ipconverter'
         },
         {
           title: 'Subnet Calculator',
-          description: 'Berechnet Netzwerk-, Broadcast- und Hostadressen.',
+          description: 'Calculates network, broadcast, and host address ranges based on IP and CIDR.',
           route: '/subnet'
         },
         {
           title: 'Transfer Time Calculator',
-          description: 'Schätzt die Dauer einer Dateiübertragung.',
+          description: 'Estimates the time required to transfer a file of a given size.',
           route: '/transfer'
         },
         {
           title: 'Bandwidth Calculator',
-          description: 'Berechnet die benötigte Bandbreite.',
+          description: 'Calculates required bandwidth based on file size and time.',
           route: '/bandwidth'
         },
         {
           title: 'Latency Calculator',
-          description: 'Ermittelt die geschätzte Signallaufzeit.',
+          description: 'Estimates signal latency based on distance and medium speed.',
           route: '/latency'
         }
       ],
+
+      // Color variations for buttons, cycling through this list
       buttonColors: ['primary', 'secondary', 'success', 'info', 'warning']
     }
   }
@@ -66,6 +75,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
+// Card hover effect
 .hover-card {
   cursor: pointer;
   transition: 0.2s ease;
@@ -78,10 +88,12 @@ export default defineComponent({
   }
 }
 
+// Card bottom spacing
 v-card {
   margin-bottom: 24px;
 }
 
+// Center-align card title and text
 v-card-title,
 v-card-text {
   text-align: center;
