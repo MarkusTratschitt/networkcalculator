@@ -105,7 +105,7 @@ export default defineComponent({
     resultsToShow(): Record<string, string | number> {
       if (!this.result) return {}
 
-      const {
+      let {
         effectiveSpeedMbps,
         transferTimeInSeconds,
         formattedTime,
