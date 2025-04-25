@@ -1,38 +1,59 @@
 <template lang="pug">
-  CalculatorWrapper(title="Subnet Calculator")
-    v-form(@submit.prevent="calculate")
-      v-row(dense)
-        v-col(cols="12" md="6")
-          InputField(v-model="ip" label="IPv4-Adresse" placeholder="z. B. 192.168.0.1")
-        v-col(cols="12" md="6")
-          InputField(v-model="cidr" label="CIDR" type="number" placeholder="z. B. 24")
+CalculatorWrapper(title="Subnet Calculator")
+  v-form(@submit.prevent="calculate")
+    v-row(dense)
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="ip"
+          label="IPv4-Adresse"
+          placeholder="z. B. 192.168.1.1"
+        )
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="maskInput"
+          label="CIDR oder Subnetzmaske"
+          placeholder="z. B. 24 oder 255.255.255.0"
+        )
 
-      v-btn(color="primary" class="mt-2" type="submit") Berechnen
+    v-row(justify="center")
+      v-btn(color="primary" class="mt-4" type="submit") Berechnen
 
-    ResultBox(:results="resultsToShow")
+  v-divider.my-6
+
+  ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { useSubnetCalculator } from '@/composables/useSubnetCalculator'
-import type { SubnetInfo } from '@/types/SubnetInfo'
+import { subnetMaskToCIDR } from '@/utils/netmask'
+import type { SubnetInfo, IPv4 } from '@/types'
 
 export default defineComponent({
   name: 'SubnetPage',
-  setup() {
-    let ip = ref('')
-    let cidr = ref<number | null>(null)
-    let result = ref<SubnetInfo | null>(null)
 
-    function calculate() {
-      if (!ip.value || cidr.value === null) return
-      let calculator = useSubnetCalculator(ip.value as any, cidr.value)
-      result.value = calculator?.toSubnetInfo() || null
+  data() {
+    return {
+      ip: '' as IPv4,
+      maskInput: '',
+      result: null as SubnetInfo | null
     }
+  },
 
-    let resultsToShow = computed(() => {
-      if (!result.value) return {}
-      let {
+  computed: {
+    cidr(): number | null {
+      const input = this.maskInput.trim()
+      if (/^\d{1,2}$/.test(input)) {
+        const parsed = parseInt(input)
+        return parsed >= 0 && parsed <= 32 ? parsed : null
+      }
+      const cidr = subnetMaskToCIDR(input)
+      return cidr ?? null
+    },
+
+    resultsToShow(): Record<string, string | number> {
+      if (!this.result) return {}
+      const {
         subnetMask,
         wildcardMask,
         networkAddress,
@@ -40,7 +61,7 @@ export default defineComponent({
         firstHost,
         lastHost,
         numberOfHosts
-      } = result.value
+      } = this.result
 
       return {
         'Subnetzmaske': subnetMask,
@@ -51,9 +72,18 @@ export default defineComponent({
         'Letzter Host': lastHost,
         'Anzahl Hosts': numberOfHosts
       }
-    })
+    }
+  },
 
-    return { ip, cidr, result, calculate, resultsToShow }
+  methods: {
+    calculate() {
+      if (!this.ip || this.cidr === null) {
+        this.result = null
+        return
+      }
+
+      this.result = useSubnetCalculator(this.ip, this.cidr)
+    }
   }
 })
 </script>
