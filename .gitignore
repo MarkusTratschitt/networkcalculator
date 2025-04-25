@@ -1,1 +1,17 @@
 /Flashpost-tests
+/node_modules
+/.nuxt
+/.output
+/.output/public
+/.output/server
+/.output/client
+/.output/server/index.mjs
+/.output/server/index.js
+/.vscode
+/.idea
+/.DS_Store
+/.env
+/.env.local
+/.env.development
+/.env.production
+/.env.test
