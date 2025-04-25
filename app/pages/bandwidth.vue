@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { useBandwidthCalculator } from '@/composables/useBandwidthCalculator'
-import type { BandwidthCalculation } from '@/types/network'
+import type { BandwidthCalculation } from '@/types/'
 
 export default defineComponent({
   name: 'BandwidthPage',

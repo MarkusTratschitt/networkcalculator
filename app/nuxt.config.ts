@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   //@ts-ignore
   devtools: { enabled: true },
 
-  css: ['@/assets/styles/main.less'],
+  css: ['vuetify/styles', '@/assets/main.less'],
 
   build: {
     transpile: ['vuetify'], 
@@ -17,9 +17,17 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxt/test-utils',
-    '@vite-pwa/nuxt' 
+    '@vite-pwa/nuxt',
+    'vuetify-nuxt-module'
   ],
-
+  vuetify: {
+    moduleOptions: {
+      /* module specific options */
+    },
+    vuetifyOptions: {
+      /* vuetify options */
+    }
+  },
   //@ts-ignore
   pwa: {
     registerType: 'autoUpdate',

@@ -1,7 +1,6 @@
 <template lang="pug">
-  v-app
-    v-main
-      NuxtPage
+  VApp
+    NuxtPage
 </template>
 
 <script lang="ts">
