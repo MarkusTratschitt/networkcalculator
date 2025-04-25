@@ -1,6 +1,6 @@
 // composables/useTransferTimeCalculator.ts
 
-import type { TransferTimeInput, TransferTimeResult } from '@/types/network'
+import type { TransferTimeInput, TransferTimeResult } from '@/types'
 
 /**
  * Calculates transfer time based on data size, bandwidth and optional overhead/latency.
@@ -25,8 +25,8 @@ export function useTransferTimeCalculator(input: TransferTimeInput): TransferTim
       throw new Error(`Invalid bandwidth unit: ${bandwidthUnit}`)
     }
 
-    let dataSizeInMB = dataSize * dataUnitMap[dataUnit]
-    let bandwidthInMbps = bandwidth * bandwidthUnitMap[bandwidthUnit]
+    let dataSizeInMB = dataSize * dataUnitMap[dataUnit as keyof typeof dataUnitMap]
+    let bandwidthInMbps = bandwidth * bandwidthUnitMap[bandwidthUnit as keyof typeof bandwidthUnitMap]
 
     // Apply protocol overhead
     let effectiveSpeed = bandwidthInMbps * ((100 - overheadPercent) / 100)
