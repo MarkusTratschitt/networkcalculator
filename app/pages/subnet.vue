@@ -20,14 +20,24 @@ CalculatorWrapper(title="Subnet Calculator")
 
   v-divider.my-6
 
+  v-row(v-if="cidr !== null || subnetMask")
+    v-col(cols="12" md="6")
+      v-alert(type="info" border="start" elevation="1")
+        strong CIDR: 
+        |  /{{ cidr ?? '—' }}
+    v-col(cols="12" md="6")
+      v-alert(type="info" border="start" elevation="1")
+        strong Subnetzmaske: 
+        |  {{ subnetMask || '—' }}
+
   ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { useSubnetCalculator } from '@/composables/useSubnetCalculator'
-import { subnetMaskToCIDR } from '@/utils/netmask'
-import type { SubnetInfo, IPv4 } from '@/types'
+import { subnetMaskToCIDR, cidrToSubnetMask } from '@/types'
+import type { IPv4, SubnetInfo } from '@/types'
 
 export default defineComponent({
   name: 'SubnetPage',
@@ -42,18 +52,22 @@ export default defineComponent({
 
   computed: {
     cidr(): number | null {
-      const input = this.maskInput.trim()
+      let input = this.maskInput.trim()
       if (/^\d{1,2}$/.test(input)) {
-        const parsed = parseInt(input)
+        let parsed = parseInt(input)
         return parsed >= 0 && parsed <= 32 ? parsed : null
       }
-      const cidr = subnetMaskToCIDR(input)
+      let cidr = subnetMaskToCIDR(input)
       return cidr ?? null
+    },
+
+    subnetMask(): string {
+      return this.cidr !== null ? cidrToSubnetMask(this.cidr) : ''
     },
 
     resultsToShow(): Record<string, string | number> {
       if (!this.result) return {}
-      const {
+      let {
         subnetMask,
         wildcardMask,
         networkAddress,
@@ -82,7 +96,18 @@ export default defineComponent({
         return
       }
 
-      this.result = useSubnetCalculator(this.ip, this.cidr)
+      const calc = useSubnetCalculator(this.ip, this.cidr)
+      this.result = calc ? { 
+        ip: this.ip, 
+        cidr: this.cidr, 
+        networkAddress: calc.getNetworkAddress(), 
+        broadcastAddress: calc.getBroadcastAddress(), 
+        firstHost: calc.getFirstHost(), 
+        lastHost: calc.getLastHost(), 
+        numberOfHosts: calc.numberOfHosts, 
+        wildcardMask: calc.getWildcardMask(), 
+        subnetMask: calc.getSubnetMask() 
+      } : null
     }
   }
 })

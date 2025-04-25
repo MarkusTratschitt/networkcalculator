@@ -35,7 +35,7 @@ CalculatorWrapper(title="IP Format Converter")
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useIPConverter } from '@/composables/useIPConverter'
-import type { IPAddressWithFormat } from '@/types/IPAddressWithFormat'
+import type { IPAddressWithFormat, IPFormat } from '@/types'
 
 export default defineComponent({
   name: 'IPConverterPage',

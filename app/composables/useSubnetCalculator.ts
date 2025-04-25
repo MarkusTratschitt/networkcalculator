@@ -9,6 +9,7 @@ import type { SubnetInfo, IPVersion, IPv4 } from '@/types'
 export class SubnetCalculator {
   ip: IPv4
   cidr: number
+  numberOfHosts: number;
 
   constructor(ip: IPv4, cidr: number) {
     if (!SubnetCalculator.validateIP(ip)) {
