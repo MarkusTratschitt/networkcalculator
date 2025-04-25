@@ -104,7 +104,7 @@ export default defineComponent({
         broadcastAddress: calc.getBroadcastAddress(), 
         firstHost: calc.getFirstHost(), 
         lastHost: calc.getLastHost(), 
-        numberOfHosts: calc.numberOfHosts, 
+        numberOfHosts: calc.getNumberOfHosts(), 
         wildcardMask: calc.getWildcardMask(), 
         subnetMask: calc.getSubnetMask() 
       } : null
