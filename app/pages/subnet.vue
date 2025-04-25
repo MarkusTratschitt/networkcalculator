@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { useSubnetCalculator } from '@/composables/useSubnetCalculator'
-import type { SubnetInfo } from '@/types/network'
+import type { SubnetInfo } from '@/types/SubnetInfo'
 
 export default defineComponent({
   name: 'SubnetPage',

@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { useLatencyCalculator } from '@/composables/useLatencyCalculator'
-import type { LatencyResult } from '@/types/network'
+import type { LatencyResult } from '@/types/LatencyResult'
 
 export default defineComponent({
   name: 'LatencyPage',

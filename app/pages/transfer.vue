@@ -25,7 +25,8 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
 import { useTransferTimeCalculator } from '@/composables/useTransferTimeCalculator'
-import type { TransferTimeInput, TransferTimeResult } from '@/types/network'
+import type { TransferTimeInput } from '@/types/TransferTimeInput'
+import type { TransferTimeResult } from '@/types/TransferTimeResult'
 
 export default defineComponent({
   name: 'TransferPage',
