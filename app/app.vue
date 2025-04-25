@@ -1,10 +1,11 @@
 <template lang="pug">
   v-app
     NuxtLayout
-    NuxtPage
+      NuxtPage
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'AppRoot'
 })
