@@ -1,11 +1,10 @@
-// composables/useIPConverter.ts
-
 import type { IPAddressWithFormat, IPFormat } from '@/types'
 
 /**
  * Converts an IPv4 address between binary, decimal and hexadecimal formats.
  * Accepts only valid IPv4 dotted-decimal input.
  */
+
 export function useIPConverter(ip: string, format: IPFormat): IPAddressWithFormat | null {
   if (!validateIPv4(ip)) {
     console.warn('[IPConverter] Invalid IPv4 address:', ip)
