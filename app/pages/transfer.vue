@@ -1,66 +1,131 @@
 <template lang="pug">
-  CalculatorWrapper(title="Transfer Time Calculator")
-    v-form(@submit.prevent="calculate")
-      v-row(dense)
-        v-col(cols="12" md="6")
-          InputField(v-model="input.dataSize" label="Dateigröße" type="number" placeholder="z. B. 150")
-        v-col(cols="12" md="6")
-          v-select(v-model="input.dataUnit" :items="dataUnits" label="Einheit" outlined dense)
+CalculatorWrapper(title="Transfer Time Calculator")
+  v-form(@submit.prevent="calculate")
+    v-row(dense)
+      // Data size input (e.g., 150 MB)
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="input.dataSize"
+          label="Data Size"
+          type="number"
+          placeholder="e.g. 150"
+        )
 
-        v-col(cols="12" md="6")
-          InputField(v-model="input.bandwidth" label="Bandbreite" type="number" placeholder="z. B. 100")
-        v-col(cols="12" md="6")
-          v-select(v-model="input.bandwidthUnit" :items="bandwidthUnits" label="Einheit" outlined dense)
+      // Data unit selection (KB, MB, etc.)
+      v-col(cols="12" md="6")
+        v-select(
+          v-model="input.dataUnit"
+          :items="dataUnits"
+          label="Data Unit"
+          outlined
+          dense
+        )
 
-        v-col(cols="12" md="6")
-          InputField(v-model="input.overheadPercent" label="Overhead in %" type="number" placeholder="optional")
-        v-col(cols="12" md="6")
-          InputField(v-model="input.estimatedLatencyMs" label="Latenz in ms" type="number" placeholder="optional")
+      // Bandwidth input (e.g., 100 Mbps)
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="input.bandwidth"
+          label="Bandwidth"
+          type="number"
+          placeholder="e.g. 100"
+        )
 
-      v-btn(color="primary" class="mt-2" type="submit") Berechnen
+      // Bandwidth unit selection (Kbps, Mbps, etc.)
+      v-col(cols="12" md="6")
+        v-select(
+          v-model="input.bandwidthUnit"
+          :items="bandwidthUnits"
+          label="Bandwidth Unit"
+          outlined
+          dense
+        )
 
-    ResultBox(:results="resultsToShow")
+      // Optional overhead in percent
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="input.overheadPercent"
+          label="Overhead (%)"
+          type="number"
+          placeholder="optional"
+        )
+
+      // Optional latency in ms
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="input.estimatedLatencyMs"
+          label="Latency (ms)"
+          type="number"
+          placeholder="optional"
+        )
+
+    // Calculate button
+    v-row(justify="center")
+      v-btn(color="primary" class="mt-4" type="submit") Calculate
+
+  v-divider.my-6
+
+  // Result output box
+  ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent } from 'vue'
 import { useTransferTimeCalculator } from '@/composables/useTransferTimeCalculator'
 import type { TransferTimeInput } from '@/types/TransferTimeInput'
 import type { TransferTimeResult } from '@/types/TransferTimeResult'
 
 export default defineComponent({
   name: 'TransferPage',
-  setup() {
-    let input = ref<TransferTimeInput>({
-      dataSize: 0,
-      dataUnit: 'MB',
-      bandwidth: 0,
-      bandwidthUnit: 'Mbps',
-      overheadPercent: undefined,
-      estimatedLatencyMs: undefined
-    })
 
-    let result = ref<TransferTimeResult | null>(null)
+  data() {
+    return {
+      // Input model for transfer time calculation
+      input: {
+        dataSize: 0,
+        dataUnit: 'MB',
+        bandwidth: 0,
+        bandwidthUnit: 'Mbps',
+        overheadPercent: undefined,
+        estimatedLatencyMs: undefined
+      } as TransferTimeInput,
 
-    function calculate() {
-      result.value = useTransferTimeCalculator(input.value)
+      // Output result object
+      result: null as TransferTimeResult | null,
+
+      // Available data size units
+      dataUnits: ['KB', 'MB', 'GB', 'TB'],
+
+      // Available bandwidth units
+      bandwidthUnits: ['Kbps', 'Mbps', 'Gbps']
     }
+  },
 
-    let dataUnits = ['KB', 'MB', 'GB', 'TB']
-    let bandwidthUnits = ['Kbps', 'Mbps', 'Gbps']
+  computed: {
+    // Computed object for display in ResultBox
+    resultsToShow(): Record<string, string | number> {
+      if (!this.result) return {}
 
-    let resultsToShow = computed(() => {
-      if (!result.value) return {}
-      let { effectiveSpeedMbps, transferTimeInSeconds, formattedTime, notes } = result.value
+      const {
+        effectiveSpeedMbps,
+        transferTimeInSeconds,
+        formattedTime,
+        notes
+      } = this.result
+
       return {
-        'Effektive Bandbreite (Mbps)': effectiveSpeedMbps,
-        'Übertragungszeit (Sekunden)': transferTimeInSeconds,
-        'Übertragungszeit (formatiert)': formattedTime,
-        Hinweise: notes || 'Keine'
+        'Effective Bandwidth (Mbps)': effectiveSpeedMbps,
+        'Transfer Time (seconds)': transferTimeInSeconds,
+        'Formatted Time': formattedTime,
+        'Notes': notes || 'None'
       }
-    })
+    }
+  },
 
-    return { input, result, calculate, dataUnits, bandwidthUnits, resultsToShow }
+  methods: {
+    // Execute transfer time calculation
+    calculate(): void {
+      this.result = useTransferTimeCalculator(this.input)
+    }
   }
 })
 </script>
