@@ -1,5 +1,3 @@
-// composables/useSubnetCalculator.ts
-
 import type { SubnetInfo, IPVersion, IPv4 } from '@/types'
 
 /**
@@ -7,7 +5,7 @@ import type { SubnetInfo, IPVersion, IPv4 } from '@/types'
  * Validates input and computes network-related properties.
  */
 export class SubnetCalculator {
-  
+
   ip: IPv4
   cidr: number
   HostCount!: number;
@@ -103,6 +101,7 @@ export class SubnetCalculator {
 /**
  * Factory function to create a SubnetCalculator instance.
  */
+
 export function useSubnetCalculator(ip: IPv4, cidr: number): SubnetCalculator | null {
   try {
     return new SubnetCalculator(ip, cidr)
