@@ -1,11 +1,10 @@
-// composables/useLatencyCalculator.ts
-
 import type { LatencyResult } from '@/types'
 
 /**
  * Calculates latency in milliseconds based on distance and transmission medium speed.
  * Uses the formula: latency = (distance / speed) * 1000
  */
+
 export function useLatencyCalculator(distanceInKm: number, speedInMedium: number): LatencyResult | null {
   if (distanceInKm <= 0 || speedInMedium <= 0) {
     console.warn('[LatencyCalculator] Invalid input:', { distanceInKm, speedInMedium })
