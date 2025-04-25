@@ -1,44 +1,96 @@
 <template lang="pug">
-  CalculatorWrapper(title="Latency Calculator")
-    v-form(@submit.prevent="calculate")
-      v-row(dense)
-        v-col(cols="12" md="6")
-          InputField(v-model="distance" label="Entfernung (km)" type="number" placeholder="z. B. 1500")
-        v-col(cols="12" md="6")
-          InputField(v-model="speed" label="Geschwindigkeit im Medium (m/s)" type="number" placeholder="z. B. 200000000")
+CalculatorWrapper(title="Latency Calculator")
+  v-form(@submit.prevent="calculate")
+    v-row(dense)
+      v-col(cols="12" md="6")
+        InputField(
+          v-model="distance"
+          label="Distance (km)"
+          type="number"
+          placeholder="e.g. 1500"
+        )
+      v-col(cols="12" md="6")
+        v-select(
+          v-model="speed"
+          :items="speedOptions"
+          label="Signal speed in medium (m/s)"
+          item-title="label"
+          item-value="value"
+          clearable
+          outlined
+          dense
+        )
 
-      v-btn(color="primary" class="mt-2" type="submit") Berechnen
+    v-row(justify="center")
+      v-btn(
+        color="primary"
+        class="mt-2"
+        type="submit"
+        :disabled="!isValid"
+      ) Calculate
 
-    ResultBox(:results="resultsToShow")
+  v-divider.my-6
+
+  ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent } from 'vue'
 import { useLatencyCalculator } from '@/composables/useLatencyCalculator'
 import type { LatencyResult } from '@/types/LatencyResult'
 
 export default defineComponent({
   name: 'LatencyPage',
-  setup() {
-    let distance = ref<number | null>(null)
-    let speed = ref<number | null>(null)
-    let result = ref<LatencyResult | null>(null)
 
-    function calculate() {
-      if (distance.value === null || speed.value === null) return
-      result.value = useLatencyCalculator(distance.value, speed.value)
+  data() {
+    return {
+      // Distance in kilometers
+      distance: null as number | null,
+
+      // Signal speed in m/s (selected from dropdown)
+      speed: null as number | null,
+
+      // Result object
+      result: null as LatencyResult | null,
+
+      // Preset signal speeds for common transmission media
+      speedOptions: [
+        { label: 'Fiber Optic (Light) – 200,000,000 m/s', value: 200_000_000 },
+        { label: 'Copper (Electrical Signal) – 150,000,000 m/s', value: 150_000_000 },
+        { label: 'Air (Radio Signal) – 300,000,000 m/s', value: 300_000_000 },
+        { label: 'Vacuum (Satellite) – 299,792,458 m/s', value: 299_792_458 },
+        { label: 'Water – 1,480,000 m/s', value: 1_480_000 }
+      ]
     }
+  },
 
-    let resultsToShow = computed(() => {
-      if (!result.value) return {}
+  computed: {
+    // Validation logic for inputs
+    isValid(): boolean {
+      return this.distance !== null && this.speed !== null && this.distance > 0 && this.speed > 0
+    },
+
+    // Output formatting for the result
+    resultsToShow(): Record<string, number> {
+      if (!this.result) return {}
       return {
-        'Entfernung (km)': result.value.distanceInKm,
-        'Signalgeschwindigkeit (m/s)': result.value.speedInMedium,
-        'Geschätzte Latenz (ms)': result.value.estimatedLatencyMs
+        'Distance (km)': this.result.distanceInKm,
+        'Signal speed (m/s)': this.result.speedInMedium,
+        'Estimated latency (ms)': this.result.estimatedLatencyMs
       }
-    })
+    }
+  },
 
-    return { distance, speed, result, calculate, resultsToShow }
+  methods: {
+    // Calculation handler
+    calculate(): void {
+      if (!this.isValid) {
+        this.result = null
+        return
+      }
+
+      this.result = useLatencyCalculator(this.distance!, this.speed!)
+    }
   }
 })
 </script>
