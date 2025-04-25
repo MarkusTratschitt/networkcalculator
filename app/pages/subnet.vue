@@ -2,41 +2,58 @@
 CalculatorWrapper(title="Subnet Calculator")
   v-form(@submit.prevent="calculate")
     v-row(dense)
+      // IPv4 address input
       v-col(cols="12" md="6")
         InputField(
           v-model="ip"
-          label="IPv4-Adresse"
-          placeholder="z. B. 192.168.1.1"
+          label="IPv4 Address"
+          placeholder="e.g. 192.168.1.1"
         )
+
+      // CIDR dropdown or mask input
+      v-col(cols="12" md="6")
+        v-autocomplete(
+          v-model="maskInput"
+          :items="cidrPresets"
+          label="CIDR or Subnet Mask"
+          placeholder="e.g. 24 or 255.255.255.0"
+          clearable
+          dense
+          outlined
+        )
+
+      // Optional IPv6 field (future use)
       v-col(cols="12" md="6")
         InputField(
-          v-model="maskInput"
-          label="CIDR oder Subnetzmaske"
-          placeholder="z. B. 24 oder 255.255.255.0"
+          v-model="ipv6"
+          label="IPv6 Address (optional)"
+          placeholder="e.g. 2001:db8::1"
         )
 
     v-row(justify="center")
-      v-btn(color="primary" class="mt-4" type="submit") Berechnen
+      v-btn(color="primary" class="mt-4" type="submit") Calculate
 
   v-divider.my-6
 
+  // Live CIDR + Subnet Mask preview
   v-row(v-if="cidr !== null || subnetMask")
     v-col(cols="12" md="6")
       v-alert(type="info" border="start" elevation="1")
-        strong CIDR: 
+        strong CIDR:
         |  /{{ cidr ?? '—' }}
     v-col(cols="12" md="6")
       v-alert(type="info" border="start" elevation="1")
-        strong Subnetzmaske: 
+        strong Subnet Mask:
         |  {{ subnetMask || '—' }}
 
+  // Output results
   ResultBox(v-if="Object.keys(resultsToShow).length" :results="resultsToShow")
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent } from 'vue'
 import { useSubnetCalculator } from '@/composables/useSubnetCalculator'
-import { subnetMaskToCIDR, cidrToSubnetMask } from '@/types'
+import { cidrToSubnetMask, subnetMaskToCIDR } from '@/types'
 import type { IPv4, SubnetInfo } from '@/types'
 
 export default defineComponent({
@@ -44,30 +61,40 @@ export default defineComponent({
 
   data() {
     return {
-      ip: '' as IPv4,
-      maskInput: '',
-      result: null as SubnetInfo | null
+      ip: '' as IPv4,                   // IPv4 input
+      maskInput: '',                    // CIDR or mask
+      ipv6: '',                         // Optional IPv6 input
+      result: null as SubnetInfo | null, // Subnet calculation result
+
+      // Dropdown values for typical CIDR lengths
+      cidrPresets: [
+        '8', '16', '24', '30', '32',
+        '255.0.0.0', '255.255.0.0', '255.255.255.0', '255.255.255.252', '255.255.255.255'
+      ]
     }
   },
 
   computed: {
+    // Normalize CIDR input
     cidr(): number | null {
-      let input = this.maskInput.trim()
+      const input = this.maskInput.trim()
       if (/^\d{1,2}$/.test(input)) {
-        let parsed = parseInt(input)
+        const parsed = parseInt(input)
         return parsed >= 0 && parsed <= 32 ? parsed : null
       }
-      let cidr = subnetMaskToCIDR(input)
+      const cidr = subnetMaskToCIDR(input)
       return cidr ?? null
     },
 
+    // Convert CIDR to subnet mask for display
     subnetMask(): string {
       return this.cidr !== null ? cidrToSubnetMask(this.cidr) : ''
     },
 
+    // Build a results object for ResultBox
     resultsToShow(): Record<string, string | number> {
       if (!this.result) return {}
-      let {
+      const {
         subnetMask,
         wildcardMask,
         networkAddress,
@@ -78,35 +105,42 @@ export default defineComponent({
       } = this.result
 
       return {
-        'Subnetzmaske': subnetMask,
-        'Wildcard-Maske': wildcardMask,
-        'Netzwerkadresse': networkAddress,
-        'Broadcast-Adresse': broadcastAddress,
-        'Erster Host': firstHost,
-        'Letzter Host': lastHost,
-        'Anzahl Hosts': numberOfHosts
+        'Subnet Mask': subnetMask,
+        'Wildcard Mask': wildcardMask,
+        'Network Address': networkAddress,
+        'Broadcast Address': broadcastAddress,
+        'First Host': firstHost,
+        'Last Host': lastHost,
+        'Number of Hosts': numberOfHosts
       }
     }
   },
 
+  watch: {
+    // Live update calculation when input changes
+    ip: 'calculate',
+    maskInput: 'calculate'
+  },
+
   methods: {
-    calculate() {
+    // Calculate subnet values (only for IPv4 for now)
+    calculate(): void {
       if (!this.ip || this.cidr === null) {
         this.result = null
         return
       }
 
       const calc = useSubnetCalculator(this.ip, this.cidr)
-      this.result = calc ? { 
-        ip: this.ip, 
-        cidr: this.cidr, 
-        networkAddress: calc.getNetworkAddress(), 
-        broadcastAddress: calc.getBroadcastAddress(), 
-        firstHost: calc.getFirstHost(), 
-        lastHost: calc.getLastHost(), 
-        numberOfHosts: calc.getHostCount(), 
-        wildcardMask: calc.getWildcardMask(), 
-        subnetMask: calc.getSubnetMask() 
+      this.result = calc ? {
+        ip: this.ip,
+        cidr: this.cidr,
+        subnetMask: calc.getSubnetMask(),
+        wildcardMask: calc.getWildcardMask(),
+        networkAddress: calc.getNetworkAddress(),
+        broadcastAddress: calc.getBroadcastAddress(),
+        firstHost: calc.getFirstHost(),
+        lastHost: calc.getLastHost(),
+        numberOfHosts: calc.getHostCount()
       } : null
     }
   }
