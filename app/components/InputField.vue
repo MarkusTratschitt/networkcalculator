@@ -1,27 +1,52 @@
 <template lang="pug">
-  v-text-field(
-    v-bind="props"
-    v-model="modelValue"
-    :type="props.type || 'text'"
-    :label="props.label"
-    :placeholder="props.placeholder"
-    :error="props.error"
-    :error-messages="props.errorMessages"
-    outlined
-    dense
-    hide-details="auto"
-  )
+v-text-field(
+  v-model="model"
+  :label="label"
+  :placeholder="placeholder"
+  :type="type"
+  :error="error"
+  :error-messages="errorMessages"
+  outlined
+  dense
+  hide-details="auto"
+)
 </template>
 
-<script lang="ts" setup>
-const props = defineProps({
-  modelValue: [String, Number],
-  label: String,
-  placeholder: String,
-  type: String,
-  error: Boolean,
-  errorMessages: [String, Array]
-})
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-const emit = defineEmits(['update:modelValue'])
+export default defineComponent({
+  name: 'InputField',
+  props: {
+    modelValue: {
+      type: [String, Number],
+      required: true
+    },
+    label: String,
+    placeholder: String,
+    type: {
+      type: String,
+      default: 'text'
+    },
+    error: {
+      type: Boolean,
+      default: false
+    },
+    errorMessages: {
+      type: [String, Array],
+      default: ''
+    }
+  },
+  emits: ['update:modelValue'],
+  computed: {
+    model: {
+      get(): string | number {
+        return this.modelValue
+      },
+      set(value: string | number) {
+        this.$emit('update:modelValue', value)
+      }
+    }
+  }
+})
 </script>
