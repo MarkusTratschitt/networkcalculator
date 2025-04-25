@@ -75,10 +75,10 @@ export default defineComponent({
   methods: {
     // Basic IPv4 validation: checks structure and number ranges
     isValidIPv4(ip: string): boolean {
-      const parts = ip.trim().split('.')
+      let parts = ip.trim().split('.')
       if (parts.length !== 4) return false
       return parts.every(part => {
-        const num = Number(part)
+        let num = Number(part)
         return !isNaN(num) && num >= 0 && num <= 255
       })
     },
