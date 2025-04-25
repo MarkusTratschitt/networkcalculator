@@ -1,4 +1,4 @@
 /**
  * Unterstützte IP-Versionen.
  */
-export type IPVersion = 'ipv4' | 'ipv6'
+export type IPVersion = 'IPv4' | 'IPv6'

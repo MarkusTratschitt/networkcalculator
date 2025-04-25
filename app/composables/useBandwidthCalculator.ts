@@ -1,4 +1,4 @@
-import type { BandwidthCalculation } from '@/types/BandwidthCalculation'
+import type { BandwidthCalculation } from '@/types'
 
 /**
  * Berechnet die erforderliche Bandbreite basierend auf Dateigröße (MB) und Zeit (Sekunden).

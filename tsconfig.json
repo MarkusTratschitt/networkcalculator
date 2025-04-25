@@ -1,5 +1,5 @@
 {
-  "extends": "./.nuxt/tsconfig.json",
+  "extends": "./app/.nuxt/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./app",
     "paths": {
@@ -9,7 +9,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "strict": true,
-    "types": ["@types/node"]
   },
   "include": ["./app/**/*", "nuxt.config.ts"]
 }

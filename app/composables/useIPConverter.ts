@@ -1,6 +1,6 @@
 // composables/useIPConverter.ts
 
-import type { IPAddressWithFormat, IPFormat } from '@/types/network'
+import type { IPAddressWithFormat, IPFormat } from '@/types'
 
 /**
  * Converts an IPv4 address between binary, decimal and hexadecimal formats.
@@ -24,7 +24,7 @@ export function useIPConverter(ip: string, format: IPFormat): IPAddressWithForma
     binary,
     decimal,
     hexadecimal,
-    version: 'ipv4'
+    version: 'IPv4'
   }
 }
 

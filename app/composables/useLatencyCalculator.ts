@@ -1,6 +1,6 @@
 // composables/useLatencyCalculator.ts
 
-import type { LatencyResult } from '@/types/network'
+import type { LatencyResult } from '@/types'
 
 /**
  * Calculates latency in milliseconds based on distance and transmission medium speed.

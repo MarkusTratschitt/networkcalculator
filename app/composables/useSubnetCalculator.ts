@@ -1,6 +1,6 @@
 // composables/useSubnetCalculator.ts
 
-import type { SubnetInfo, IPv4 } from '@/types/network'
+import type { SubnetInfo, IPVersion } from '@/types'
 
 /**
  * A class to handle IPv4 subnet calculations using CIDR notation.
