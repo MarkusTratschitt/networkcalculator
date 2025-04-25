@@ -7,9 +7,7 @@ import type { SubnetInfo, IPVersion, IPv4 } from '@/types'
  * Validates input and computes network-related properties.
  */
 export class SubnetCalculator {
-  getNumberOfHosts(): number {
-    throw new Error('Method not implemented.');
-  }
+  
   ip: IPv4
   cidr: number
   HostCount!: number;
