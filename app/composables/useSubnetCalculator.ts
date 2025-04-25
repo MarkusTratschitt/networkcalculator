@@ -12,7 +12,7 @@ export class SubnetCalculator {
   }
   ip: IPv4
   cidr: number
-  numberOfHosts: number;
+  HostCount!: number;
 
   constructor(ip: IPv4, cidr: number) {
     if (!SubnetCalculator.validateIP(ip)) {
