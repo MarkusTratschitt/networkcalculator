@@ -17,10 +17,12 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'InputField',
+
   props: {
     modelValue: {
       type: [String, Number],
-      required: true
+      required: false,
+      default: ''
     },
     label: String,
     placeholder: String,
@@ -37,7 +39,9 @@ export default defineComponent({
       default: ''
     }
   },
+
   emits: ['update:modelValue'],
+
   computed: {
     model: {
       get(): string | number {
