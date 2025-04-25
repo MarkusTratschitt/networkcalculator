@@ -4,6 +4,11 @@ Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduct
 
 ## Setup
 ```bash
+# clone the repo
+git clone https://github.com/MarkusTratschitt/networkcalculator
+```
+
+```bash
 # open ProjectFolder
 cd app
 ````
