@@ -15,3 +15,4 @@
 /.env.development
 /.env.production
 /.env.test
+*.zshrc
